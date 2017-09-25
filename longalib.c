@@ -67,4 +67,45 @@ int dump_longa( uint_longa_t number )
 	return 0;
 }
 
+bool is_equal_longa( uint_longa_t a, uint_longa_t b )
+{
+	if( a.n != b.n )
+		return false;
+	for( int i = 0; i < a.n; i++ )
+		if( a.digits[i] != b.digits[i] )
+			return false;
+	return true;
+}
+
+bool is_greater_longa( uint_longa_t a, uint_longa_t b )
+{
+	if( a.n > b.n )
+		return true;
+	if( a.n < b.n )
+		return false;
+	for( int i = a.n - 1; i >= 0; i-- )
+		if( a.digits[i] > b.digits[i] )
+			return true;
+		else
+			if( a.digits[i] < b.digits[i] )
+				return false;
+	return false;
+}
+
+bool is_less_longa( uint_longa_t a, uint_longa_t b )
+{
+	if( a.n < b.n )
+		return true;
+	if( a.n > b.n )
+		return false;
+	for( int i = a.n - 1; i >= 0; i-- )
+		if( a.digits[i] < b.digits[i] )
+			return true;
+		else
+			if( a.digits[i] > b.digits[i] )
+				return false;
+	return false;
+}
+
+
 
