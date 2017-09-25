@@ -11,7 +11,8 @@ typedef struct uint_longa              //represent a number
 	digit_longa_t *digits;
 } uint_longa_t;
 
-int construct_longa( int n, uint_longa_t *number, char *str_number );
+int construct_with_str_longa( uint_longa_t *number, long unsigned int n_decimal, char *str_number );
+int construct_longa( uint_longa_t *number, long unsigned int n_decimal );
 int destruct_longa( uint_longa_t *number );
 
 int dump_longa( uint_longa_t number );

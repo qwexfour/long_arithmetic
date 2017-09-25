@@ -1,13 +1,14 @@
 #include"longalib.h"
 #include<string.h>
 #include<stdlib.h>
+#include<stdio.h>
 
 
-int construct_longa( long unsigned int n_decimal, uint_longa_t *number, char *str_number )
+int construct_with_str_longa( uint_longa_t *number, long unsigned int n_decimal, char *str_number )
 {
-	long int position;
-	int i;
-	char str_digit[POWER_OF_BASE_LONGA + 1];
+	long int position;         //position in str_number
+	int i;                     //position in internal array digits
+	char str_digit[POWER_OF_BASE_LONGA + 1];   //to copy a piece of str_number that represent a digit there
 	int n;
 	//preporations
 	if( n_decimal == 0 )
@@ -35,6 +36,20 @@ int construct_longa( long unsigned int n_decimal, uint_longa_t *number, char *st
 	return 0;
 }
 
+int construct_longa( uint_longa_t *number, long unsigned int n_decimal )
+{
+	int n;
+	if( n_decimal == 0 )
+		return -1;
+	n = ( n_decimal - 1 ) / POWER_OF_BASE_LONGA + 1;   //the number of digits of our system
+	digit_longa_t *digits = (digit_longa_t*)calloc( n, sizeof( digit_longa_t ) );
+	if( digits == NULL )
+		return -1;
+	number->n = n;
+	number->digits = digits;
+	return 0;
+}
+
 int destruct_longa( uint_longa_t *number )
 {
 	if( number->digits == NULL )
@@ -47,8 +62,8 @@ int destruct_longa( uint_longa_t *number )
 int dump_longa( uint_longa_t number )
 {
 	printf( "%d\n", number.n );
-	for( i = 0; i < number.n; i++ )
-		printf( "    %d:%d\n", i, number.digit[i] );
+	for( int i = 0; i < number.n; i++ )
+		printf( "    %d:%d\n", i, number.digits[i] );
 	return 0;
 }
 
