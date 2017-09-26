@@ -1,3 +1,5 @@
+#include<stdio.h>
+
 #ifndef LONGALIB
 #define LONGALIB
 
@@ -23,9 +25,15 @@ int is_less_longa( uint_longa_t a, uint_longa_t b );
 
 int add_longa( uint_longa_t *sum, uint_longa_t a, uint_longa_t b );
 int sub_longa( uint_longa_t *division, uint_longa_t a, uint_longa_t b );
+int mul_longa( uint_longa_t *product, uint_longa_t a, uint_longa_t b );
+int simple_div_longa( uint_longa_t *quotient, uint_longa_t a, digit_longa_t b );
 
 int dump_longa( uint_longa_t number );
+int fprintf_longa( FILE *output, uint_longa_t number );
 
+
+long unsigned int max( long unsigned int a, long unsigned int b );
+long unsigned int min( long unsigned int a, long unsigned int b );
 
 
 

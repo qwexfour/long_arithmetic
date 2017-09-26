@@ -2,6 +2,7 @@
 #include<string.h>
 #include<stdlib.h>
 #include<stdio.h>
+#include<math.h>
 
 
 int construct_with_str_longa( uint_longa_t *number, long unsigned int n_decimal, char *str_number )
@@ -28,7 +29,7 @@ int construct_with_str_longa( uint_longa_t *number, long unsigned int n_decimal,
 			strncpy( str_digit, str_number, position + POWER_OF_BASE_LONGA );   //to copy the rest
 			str_digit[position + POWER_OF_BASE_LONGA] = '\0';   
 		}
-		digits[i] = atoi( str_digit );
+		digits[i] = atoi( str_digit );     //TODO: if it's not an int
 	}
 	//moving to structure
 	number->n = n;
@@ -51,9 +52,13 @@ int construct_longa( uint_longa_t *number, long unsigned int n )
 int destruct_longa( uint_longa_t *number )
 {
 	if( number->digits == NULL )
+	{
+		printf( "ERROR: attempt to free a NULL pointer\n" );
 		return -1;
-	number->n = 0;
+	}
 	free( number->digits );
+	number->digits = NULL;
+	number->n = 0;
 	return 0;
 }
 
@@ -64,6 +69,18 @@ int dump_longa( uint_longa_t number )
 		printf( "    %d:%d\n", i, number.digits[i] );
 	return 0;
 }
+
+int fprintf_longa( FILE *output, uint_longa_t a )
+{
+	if( a.n == 0 )
+		return -1;
+	fprintf( output, "%d", a.digits[a.n - 1] );
+	for( int i = a.n - 2; i >= 0; i-- )
+		fprintf( output, "%04d", a.digits[i] );
+	fprintf( output, "\n" );
+	return 0;
+}
+
 
 int is_equal_longa( uint_longa_t a, uint_longa_t b )
 {
@@ -128,7 +145,9 @@ int add_longa( uint_longa_t *sum, uint_longa_t a, uint_longa_t b )
 	int i = 0;
 	int carry_over = 0;
 	//
-	construct_longa( sum, sum_len );
+	if( a.n == 0 || b.n == 0 || sum->n < sum_len )
+		return -1;
+	//construct_longa( sum, sum_len );
 	for( i = 0; i < min_len; i++ )
 	{
 		sum->digits[i] = ( a.digits[i] + b.digits[i] + carry_over ) % BASE_LONGA;
@@ -153,9 +172,9 @@ int add_longa( uint_longa_t *sum, uint_longa_t a, uint_longa_t b )
 int sub_longa( uint_longa_t *difference, uint_longa_t a, uint_longa_t b )
 {
 	int carry_over = 0;
-	if( is_less_longa( a, b ) )
+	if( is_less_longa( a, b ) || difference->n < a.n )
 		return -1;
-	construct_longa( difference, a.n );
+	//construct_longa( difference, a.n );
 	for( int i = 0; i < b.n; i++ ) //because b has less digits or same
 	{
 		difference->digits[i] = ( BASE_LONGA + a.digits[i] - b.digits[i] + carry_over ) % BASE_LONGA;   //cause mod works wrong with negative numbers
@@ -172,9 +191,9 @@ int sub_longa( uint_longa_t *difference, uint_longa_t a, uint_longa_t b )
 int mul_longa( uint_longa_t *product, uint_longa_t a, uint_longa_t b )
 {
 	int carry_over = 0;
-	long unsigned int = 0;
-	long unsigned int product_len = a.n * b.n;       //TODO: check overflow
-	if( construct_longa( product, product_len ) )    //if there was an error
+	long unsigned int temp = 0;
+	long unsigned int product_len = a.n + b.n;       //TODO: check overflow
+	if( a.n == 0 || b.n == 0 || product->n < product_len )    
 		return -1;
 	for( int j = 0; j < b.n; j++ )
 	{
@@ -182,9 +201,43 @@ int mul_longa( uint_longa_t *product, uint_longa_t a, uint_longa_t b )
 		for( int i = 0; i < a.n; i++ )
 		{
 			temp = a.digits[i] * b.digits[j] + product->digits[i + j] + carry_over;
-			product->digits[i] = temp % BASE_LONGA;
+			product->digits[i + j] = temp % BASE_LONGA;
 			carry_over = temp / BASE_LONGA;
 		}
 		product->digits[j + a.n] = carry_over;
 	}
+	return 0;
 }
+
+int simple_div_longa( uint_longa_t *quotient, uint_longa_t a, digit_longa_t b )
+{
+	int carry_over = 0;
+	long unsigned int temp = 0;
+	if( b >= BASE_LONGA || b == 0 || a.n == 0 || quotient->n < a.n )
+		return -1;
+	//construct_longa( quotient, a.n );
+	for( int i = a.n - 1; i >= 0; i-- )
+	{
+		temp = carry_over * BASE_LONGA + a.digits[i];
+		quotient->digits[i] = temp / b;
+		carry_over = temp % b;
+	}
+	return 0;
+}
+
+
+
+long unsigned int max( long unsigned int a, long unsigned int b )
+{
+	if( a > b )
+		return a;
+	return b;
+}
+
+long unsigned int min( long unsigned int a, long unsigned int b )
+{
+	if( a < b )
+		return a;
+	return b;
+}
+
