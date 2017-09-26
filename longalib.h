@@ -15,9 +15,14 @@ int construct_with_str_longa( uint_longa_t *number, long unsigned int n_decimal,
 int construct_longa( uint_longa_t *number, long unsigned int n_decimal );
 int destruct_longa( uint_longa_t *number );
 
-bool is_equal_longa( uint_longa_t a, uint_longa_t b );
-bool is_greater_longa( uint_longa_t a, uint_longa_t b );
-bool is_less_longa( uint_longa_t a, uint_longa_t b );
+int delete_leading_zeros_longa( uint_longa_t *number );
+
+int is_equal_longa( uint_longa_t a, uint_longa_t b );
+int is_greater_longa( uint_longa_t a, uint_longa_t b );
+int is_less_longa( uint_longa_t a, uint_longa_t b );
+
+int add_longa( uint_longa_t *sum, uint_longa_t a, uint_longa_t b );
+int sub_longa( uint_longa_t *division, uint_longa_t a, uint_longa_t b );
 
 int dump_longa( uint_longa_t number );
 

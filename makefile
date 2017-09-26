@@ -1,6 +1,6 @@
 
 CC=gcc
-CFLAGS= -Wall
+CFLAGS= -std=c11 -Wall
 
 
 all: iotest.out
