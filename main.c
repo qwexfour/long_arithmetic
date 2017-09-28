@@ -44,10 +44,16 @@ int main()
 		switch( op )
 		{
 			case '+':
-				construct_longa( &res, max( a.n, b.n ) + 1 );
+				if( construct_longa( &res, max( a.n, b.n ) + 1 ) )
+				{
+					printf( "Error: cannot allocate memory\n" );
+					fprintf( output, "Error\n" );
+					break;
+				}
 				if( add_longa( &res, a, b ) )
 				{
 					fprintf( output, "Error\n" );
+					destruct_longa( &res );
 					break;
 				}
 				delete_leading_zeros_longa( &res );
@@ -55,10 +61,16 @@ int main()
 				destruct_longa( &res );
 				break;
 			case '-':
-				construct_longa( &res, a.n );
+				if( construct_longa( &res, a.n ) )
+				{
+					printf( "Error: cannot allocate memory\n" );
+					fprintf( output, "Error\n" );
+					break;
+				}
 				if( sub_longa( &res, a, b ) )
 				{
 					fprintf( output, "Error\n" );
+					destruct_longa( &res );
 					break;
 				}
 				delete_leading_zeros_longa( &res );
@@ -66,10 +78,16 @@ int main()
 				destruct_longa( &res );
 				break;
 			case '*':
-				construct_longa( &res, a.n + b.n );
+				if( construct_longa( &res, a.n + b.n ) )
+				{
+					printf( "Error: cannot allocate memory\n" );
+					fprintf( output, "Error\n" );
+					break;
+				}
 				if( mul_longa( &res, a, b ) )
 				{
 					fprintf( output, "Error\n" );
+					destruct_longa( &res );
 					break;
 				}
 				delete_leading_zeros_longa( &res );
@@ -83,12 +101,49 @@ int main()
 					if( simple_div_longa( &res, a, b.digits[0] ) )
 					{
 						fprintf( output, "Error\n" );
+						destruct_longa( &res );
 						break;
 					}
 					delete_leading_zeros_longa( &res );
 					fprintf_longa( output, res );
 					destruct_longa( &res );
 				}
+				break;
+			case '^':
+				if( construct_longa( &res, 1 ) )
+				{
+					printf( "Error: cannot allocate memory\n" );
+					fprintf( output, "Error\n" );
+					break;
+				}
+				long pow_code = pow_longa( &res, a, b );
+				if( pow_code < 0 )
+				{
+					fprintf( output, "Error\n" );
+				}
+				if( pow_code == 0 )
+				{
+					fprintf_longa( output, res );    //only one digit - no place for leading zeros
+				}
+				if( pow_code > 0 )    //func returns needed size
+				{
+					destruct_longa( &res );
+					if( construct_longa( &res, pow_code ) )
+					{
+						printf( "Error: cannot allocate memory\n" );
+						fprintf( output, "Error\n" );
+						break;
+					}
+					if( pow_longa( &res, a, b ) )
+					{
+						fprintf( output, "Error\n" );
+						destruct_longa( &res );
+						break;
+					}
+					delete_leading_zeros_longa( &res );
+					fprintf_longa( output, res );
+				}
+				destruct_longa( &res );
 				break;
 			case '=':
 				if( is_equal_longa( a, b ) )
