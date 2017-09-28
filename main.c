@@ -79,6 +79,11 @@ int main()
 				destruct_longa( &res );
 				break;
 			case '*':
+				if( a.n + b.n < a.n )   //overflow
+				{
+					fprintf( output, "Error\n" );
+					break;
+				}
 				if( construct_longa( &res, a.n + b.n ) )
 				{
 					printf( "Error: cannot allocate memory\n" );
@@ -108,13 +113,13 @@ int main()
 				destruct_longa( &res );
 				break;
 			case '^':
-				if( construct_longa( &res, 1 ) )
+				if( construct_longa( &res, 1 ) )   //it's not trivial to figure out needed size, so we use the fact that function returns needed size
 				{
 					printf( "Error: cannot allocate memory\n" );
 					fprintf( output, "Error\n" );
 					break;
 				}
-				long pow_code = pow_longa( &res, a, b );
+				size_longa_t pow_code = pow_longa( &res, a, b );
 				if( pow_code < 0 )
 				{
 					fprintf( output, "Error\n" );

@@ -3,14 +3,15 @@
 #include<stdlib.h>
 #include<stdio.h>
 #include<math.h>
+#include<limits.h>
 
 
-int construct_with_str_longa( uint_longa_t *number, long n_decimal, char *str_number )
+int construct_with_str_longa( uint_longa_t *number, long long n_decimal, char *str_number )
 {
-	long position;         //position in str_number
-	long i;                     //position in internal array digits
+	long long position;         //position in str_number
+	size_longa_t i;                     //position in internal array digits
 	char str_digit[POWER_OF_BASE_LONGA + 1];   //to copy a piece of str_number that represent a digit there
-	long n;
+	size_longa_t n;
 	//preporations
 	if( n_decimal == 0 )
 		return -1;
@@ -37,7 +38,7 @@ int construct_with_str_longa( uint_longa_t *number, long n_decimal, char *str_nu
 	return 0;
 }
 
-int construct_longa( uint_longa_t *number, long n )
+int construct_longa( uint_longa_t *number, size_longa_t n )
 {
 	if( n <= 0 )
 		return -1;
@@ -65,7 +66,7 @@ int destruct_longa( uint_longa_t *number )
 
 int copy_longa( uint_longa_t *dest, uint_longa_t src )
 {
-	long i;
+	size_longa_t i;
 	if( src.n == 0 || dest->n < src.n )
 		return -1;
 	for( i = 0; i < src.n; i++ )
@@ -75,20 +76,20 @@ int copy_longa( uint_longa_t *dest, uint_longa_t src )
 	return 0;
 }
 
-int copyn_longa( uint_longa_t *dest, uint_longa_t src, long n, long m )
+int copyn_longa( uint_longa_t *dest, uint_longa_t src, size_longa_t n, size_longa_t m )
 {
 	if( m < 0 || n > m || dest->n < m - n + 1 || src.n < m )
 		return -1;
-	for( long i = 0, j = n; j <= m; i++, j++ )
+	for( size_longa_t i = 0, j = n; j <= m; i++, j++ )
 		dest->digits[i] = src.digits[j];
-	for( long i = m - n + 1; i < dest->n; i++ )
+	for( size_longa_t i = m - n + 1; i < dest->n; i++ )
 		dest->digits[i] = 0;
 	return 0;
 }
 
 int zero_longa( uint_longa_t *number )
 {
-	for( long unsigned i = 0; i < number->n; i++ )
+	for( size_longa_t i = 0; i < number->n; i++ )
 		number->digits[i] = 0;
 	return 0;
 }
@@ -96,8 +97,8 @@ int zero_longa( uint_longa_t *number )
 int dump_longa( uint_longa_t number )
 {
 	printf( "%ld\n", number.n );
-	for( int i = 0; i < number.n; i++ )
-		printf( "    %d:%d\n", i, number.digits[i] );
+	for( size_longa_t i = 0; i < number.n; i++ )
+		printf( "    %ld:%d\n", i, number.digits[i] );
 	return 0;
 }
 
@@ -106,7 +107,7 @@ int fprintf_longa( FILE *output, uint_longa_t a )
 	if( a.n == 0 )
 		return -1;
 	fprintf( output, "%d", a.digits[a.n - 1] );
-	for( int i = a.n - 2; i >= 0; i-- )
+	for( size_longa_t i = a.n - 2; i >= 0; i-- )
 		fprintf( output, "%04d", a.digits[i] );
 	fprintf( output, "\n" );
 	return 0;
@@ -117,7 +118,7 @@ int is_equal_longa( uint_longa_t a, uint_longa_t b )
 {
 	if( a.n != b.n )
 		return 0;
-	for( int i = 0; i < a.n; i++ )
+	for( size_longa_t i = 0; i < a.n; i++ )
 		if( a.digits[i] != b.digits[i] )
 			return 0;
 	return 1;
@@ -129,7 +130,7 @@ int is_greater_longa( uint_longa_t a, uint_longa_t b )
 		return 1;
 	if( a.n < b.n )
 		return 0;
-	for( int i = a.n - 1; i >= 0; i-- )
+	for( size_longa_t i = a.n - 1; i >= 0; i-- )
 		if( a.digits[i] > b.digits[i] )
 			return 1;
 		else
@@ -144,7 +145,7 @@ int is_less_longa( uint_longa_t a, uint_longa_t b )
 		return 1;
 	if( a.n > b.n )
 		return 0;
-	for( int i = a.n - 1; i >= 0; i-- )
+	for( size_longa_t i = a.n - 1; i >= 0; i-- )
 		if( a.digits[i] < b.digits[i] )
 			return 1;
 		else
@@ -155,7 +156,7 @@ int is_less_longa( uint_longa_t a, uint_longa_t b )
 
 int delete_leading_zeros_longa( uint_longa_t *number )
 {
-	long i;
+	size_longa_t i;
 	if( number->n == 1 )
 		return 0;
 	if( number->n == 0 || number->digits == NULL )
@@ -171,9 +172,9 @@ int delete_leading_zeros_longa( uint_longa_t *number )
 
 int add_longa( uint_longa_t *sum, uint_longa_t a, uint_longa_t b )
 {
-	long sum_len = max( a.n, b.n ) + 1;
-	long min_len = min( a.n, b.n );
-	long i = 0;
+	size_longa_t sum_len = max( a.n, b.n ) + 1;
+	size_longa_t min_len = min( a.n, b.n );
+	size_longa_t i = 0;
 	int carry_over = 0;
 	if( a.n == 0 || b.n == 0 || sum->n < sum_len )
 		return -1;
@@ -206,17 +207,17 @@ int sub_longa( uint_longa_t *difference, uint_longa_t a, uint_longa_t b )
 	if( is_less_longa( a, b ) || difference->n < a.n )
 		return -1;
 	//construct_longa( difference, a.n );
-	for( long i = 0; i < b.n; i++ ) //because b has less digits or same
+	for( size_longa_t i = 0; i < b.n; i++ ) //because b has less digits or same
 	{
 		difference->digits[i] = ( BASE_LONGA + a.digits[i] - b.digits[i] + carry_over ) % BASE_LONGA;   //cause mod works wrong with negative numbers
 		carry_over = ( BASE_LONGA + a.digits[i] - b.digits[i] + carry_over ) / BASE_LONGA - 1;
 	}
-	for( long i = b.n; i < a.n; i++ )
+	for( size_longa_t i = b.n; i < a.n; i++ )
 	{
 		difference->digits[i] = ( BASE_LONGA + a.digits[i] + carry_over ) % BASE_LONGA;
 		carry_over = ( BASE_LONGA + a.digits[i] + carry_over ) / BASE_LONGA - 1;
 	}
-	for( long i = a.n; i < difference->n; i++ )
+	for( size_longa_t i = a.n; i < difference->n; i++ )
 		difference->digits[i] = 0;
 	return 0;
 }
@@ -225,14 +226,16 @@ int mul_longa( uint_longa_t *product, uint_longa_t a, uint_longa_t b )
 {
 	int carry_over = 0;
 	long temp = 0;
-	long product_len = a.n + b.n;       //TODO: check overflow
+	size_longa_t product_len = a.n + b.n;
+	if( product_len < a.n )      //owerflow
+		return -1;
 	if( a.n == 0 || b.n == 0 || product->n < product_len )    
 		return -1;
 	zero_longa( product );
-	for( long j = 0; j < b.n; j++ )
+	for( size_longa_t j = 0; j < b.n; j++ )
 	{
 		carry_over = 0;
-		for( long i = 0; i < a.n; i++ )
+		for( size_longa_t i = 0; i < a.n; i++ )
 		{
 			temp = a.digits[i] * b.digits[j] + product->digits[i + j] + carry_over;
 			product->digits[i + j] = temp % BASE_LONGA;
@@ -247,18 +250,18 @@ int int_mul_longa( uint_longa_t *product, uint_longa_t a, digit_longa_t b )
 {
 	int carry_over = 0;
 	long temp = 0;
-	long product_len = a.n + 1;
+	size_longa_t product_len = a.n + 1;
 	if( a.n == 0 || product->n < product_len )    
 		return -1;
 	zero_longa( product );
-	for( long i = 0; i < a.n; i++ )
+	for( size_longa_t i = 0; i < a.n; i++ )
 	{
 		temp = a.digits[i] * b + product->digits[i] + carry_over;
 		product->digits[i] = temp % BASE_LONGA;
 		carry_over = temp / BASE_LONGA;
 	}
 	product->digits[a.n] = carry_over;
-	for( long i = a.n + 1; i < product->n; i++ )
+	for( size_longa_t i = a.n + 1; i < product->n; i++ )
 		product->digits[i] = 0;
 	return 0;
 }
@@ -270,13 +273,13 @@ int int_div_longa( uint_longa_t *quotient, uint_longa_t a, digit_longa_t b )
 	long temp = 0;
 	if( b >= BASE_LONGA || b == 0 || a.n == 0 || quotient->n < a.n )
 		return -1;
-	for( long i = a.n - 1; i >= 0; i-- )
+	for( size_longa_t i = a.n - 1; i >= 0; i-- )
 	{
 		temp = carry_over * BASE_LONGA + a.digits[i];
 		quotient->digits[i] = temp / b;
 		carry_over = temp % b;
 	}
-	for( long i = a.n; i < quotient->n; i++ )
+	for( size_longa_t i = a.n; i < quotient->n; i++ )
 		quotient->digits[i] = 0;
 	return 0;
 }
@@ -302,19 +305,44 @@ int div_longa( uint_longa_t *quotient, uint_longa_t a, uint_longa_t b )
 	digit_longa_t d = BASE_LONGA / ( b.digits[b.n - 1] + 1 );
 	digit_longa_t q = 0, r = 0;      //quotien and rest on each step
 	digit_longa_t temp = 0;
-	long quotient_len = a.n - b.n + 1;
+	size_longa_t quotient_len = a.n - b.n + 1;
 	if( quotient->n < quotient_len )
 		return -1;
 	uint_longa_t norm_a, norm_b, local_a, b_mul_q, new_local_a;
-	construct_longa( &norm_a, a.n + 1 );
-	construct_longa( &norm_b, b.n + 1 );
-	construct_longa( &local_a, b.n + 1 );
-	construct_longa( &new_local_a, b.n + 1 );
-	construct_longa( &b_mul_q, b.n + 1 );
+	if( construct_longa( &norm_a, a.n + 1 ) )
+	{
+		return -1;
+	}
+	if( construct_longa( &norm_b, b.n + 1 ) )
+	{
+		destruct_longa( &norm_a );
+		return -1;
+	}
+	if( construct_longa( &local_a, b.n + 1 ) )
+	{
+		destruct_longa( &norm_a );
+		destruct_longa( &norm_b );
+		return -1;
+	}
+	if( construct_longa( &new_local_a, b.n + 1 ) )
+	{
+		destruct_longa( &norm_a );
+		destruct_longa( &norm_b );
+		destruct_longa( &local_a );
+		return -1;
+	}
+	if( construct_longa( &b_mul_q, b.n + 1 ) )
+	{
+		destruct_longa( &norm_a );
+		destruct_longa( &norm_b );
+		destruct_longa( &local_a );
+		destruct_longa( &new_local_a );
+		return -1;
+	}
 	int_mul_longa( &norm_a, a, d );       //normalization
 	int_mul_longa( &norm_b, b, d );       //normalization
 	delete_leading_zeros_longa( &norm_b );    //we choosed special d so norm_b.n must be equal b.n so we have delete one zero
-	for( long i = quotient_len - 1; i >= 0; i-- )
+	for( size_longa_t i = quotient_len - 1; i >= 0; i-- )
 	{
 		temp = ( norm_a.digits[i + b.n] * BASE_LONGA + norm_a.digits[i + b.n - 1] );
 		q = temp / norm_b.digits[b.n - 1];
@@ -344,7 +372,7 @@ int div_longa( uint_longa_t *quotient, uint_longa_t a, uint_longa_t b )
 			printf( "Error: in function div_longa sub returns -1\n" );
 			exit( 0 );
 		}
-		for( long j = 0; j < new_local_a.n; j++ )
+		for( size_longa_t j = 0; j < new_local_a.n; j++ )
 		{
 			norm_a.digits[i + j] = new_local_a.digits[j];
 		}
@@ -359,9 +387,11 @@ int div_longa( uint_longa_t *quotient, uint_longa_t a, uint_longa_t b )
 }
 
 
-long int_pow_longa( uint_longa_t *result, uint_longa_t a, long power )
+size_longa_t int_pow_longa( uint_longa_t *result, uint_longa_t a, long power )
 {
-	long result_len = a.n * power;
+	if( a.n > LONG_MAX / power )  //overflow
+		return -1;
+	size_longa_t result_len = a.n * power;
 	int bits_in_power = 0;
 	int cur_bit = 0;
 	long temp = power;
@@ -375,10 +405,12 @@ long int_pow_longa( uint_longa_t *result, uint_longa_t a, long power )
 		if( power == 0 )
 			return -1;
 		else
-			return 0;     //because must be 0, and it is alredy 0
+			zero_longa( result );
+			return 0;     
 	}
-	if( a.n == 1 && a.digits[0] == 1 )
+	if( ( a.n == 1 && a.digits[0] == 1 ) || power == 0 )
 	{
+		zero_longa( result );
 		result->digits[0] = 1;
 		return 0;
 	}
@@ -418,7 +450,7 @@ long int_pow_longa( uint_longa_t *result, uint_longa_t a, long power )
 	return 0;
 }
 
-long pow_longa( uint_longa_t *result, uint_longa_t a, uint_longa_t b )
+size_longa_t pow_longa( uint_longa_t *result, uint_longa_t a, uint_longa_t b )
 {
 	long power = 0;
 	if( a.n == 0 || b.n == 0 )
@@ -428,10 +460,12 @@ long pow_longa( uint_longa_t *result, uint_longa_t a, uint_longa_t b )
 		if( b.n == 1 && b.digits[0] == 0 )
 			return -1;
 		else
-			return 0;     //because the result must be 0, and it is alredy 0
+			zero_longa( result );
+			return 0;
 	}
-	if( a.n == 1 && a.digits[0] == 1 )
+	if( ( a.n == 1 && a.digits[0] == 1 ) || ( b.n == 1 && b.digits[0] == 0 ) )
 	{
+		zero_longa( result );
 		result->digits[0] = 1;
 		return 0;
 	}
