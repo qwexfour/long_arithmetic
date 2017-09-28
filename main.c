@@ -35,6 +35,7 @@ int main()
 			printf( "ERROR: failed to read second operand\n" );
 			return 0;
 		}
+		delete_leading_zeros_longa( &b );
 		if( !fscanf( input, "%s", str ) )
 		{
 			printf( "ERROR: no operation." );
@@ -95,19 +96,16 @@ int main()
 				destruct_longa( &res );
 				break;
 			case '/':
-				if( b.n == 1 )
+				construct_longa( &res, a.n );
+				if( div_longa( &res, a, b ) )
 				{
-					construct_longa( &res, a.n );
-					if( simple_div_longa( &res, a, b.digits[0] ) )
-					{
-						fprintf( output, "Error\n" );
-						destruct_longa( &res );
-						break;
-					}
-					delete_leading_zeros_longa( &res );
-					fprintf_longa( output, res );
+					fprintf( output, "Error\n" );
 					destruct_longa( &res );
+					break;
 				}
+				delete_leading_zeros_longa( &res );
+				fprintf_longa( output, res );
+				destruct_longa( &res );
 				break;
 			case '^':
 				if( construct_longa( &res, 1 ) )
