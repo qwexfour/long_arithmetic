@@ -4,6 +4,7 @@
 #include<stdio.h>
 #include<math.h>
 #include<limits.h>
+#include<assert.h>
 
 
 int construct_with_str_longa( uint_longa_t *number, long long n_decimal, char *str_number )
@@ -286,6 +287,7 @@ int int_div_longa( uint_longa_t *quotient, uint_longa_t a, digit_longa_t b )
 
 int div_longa( uint_longa_t *quotient, uint_longa_t a, uint_longa_t b )
 {
+	int ret = 0;  //to save return value for asserts
 	if( a.n == 0 || b.n == 0 || quotient->n == 0 )
 		return -1;
 	if( is_equal_longa( a, b ) )
@@ -339,8 +341,10 @@ int div_longa( uint_longa_t *quotient, uint_longa_t a, uint_longa_t b )
 		destruct_longa( &new_local_a );
 		return -1;
 	}
-	int_mul_longa( &norm_a, a, d );       //normalization
-	int_mul_longa( &norm_b, b, d );       //normalization
+	ret = int_mul_longa( &norm_a, a, d );       //normalization
+	assert( ret == 0 );
+	ret = int_mul_longa( &norm_b, b, d );       //normalization
+	assert( ret == 0 );
 	delete_leading_zeros_longa( &norm_b );    //we choosed special d so norm_b.n must be equal b.n so we have delete one zero
 	for( size_longa_t i = quotient_len - 1; i >= 0; i-- )
 	{
@@ -352,26 +356,18 @@ int div_longa( uint_longa_t *quotient, uint_longa_t a, uint_longa_t b )
 			q--;
 			r += norm_b.digits[b.n - 1];
 		}
-		copyn_longa( &local_a, norm_a, i, i + b.n );
-		if( int_mul_longa( &b_mul_q, norm_b, q ) )
-		{
-			printf( "Error: in function div_longa int_mul_longa returns 0\n" );
-			exit( 0 );
-		}
+		ret = copyn_longa( &local_a, norm_a, i, i + b.n );
+		assert( ret == 0 );
+		ret = int_mul_longa( &b_mul_q, norm_b, q );
+		assert( ret == 0 );
 		if( is_less_longa( local_a, b_mul_q ) )
 		{
 			q--;
-			if( int_mul_longa( &b_mul_q, norm_b, q ) )
-			{
-				printf( "Error: in function div_longa int_mul_longa returns -1\n" );
-				exit( 0 );
-			}
+			ret = int_mul_longa( &b_mul_q, norm_b, q );
+			assert( ret == 0 );
 		}
-		if( sub_longa( &new_local_a, local_a, b_mul_q ) )
-		{
-			printf( "Error: in function div_longa sub returns -1\n" );
-			exit( 0 );
-		}
+		ret = sub_longa( &new_local_a, local_a, b_mul_q );
+		assert( ret == 0 );
 		for( size_longa_t j = 0; j < new_local_a.n; j++ )
 		{
 			norm_a.digits[i + j] = new_local_a.digits[j];
@@ -389,6 +385,7 @@ int div_longa( uint_longa_t *quotient, uint_longa_t a, uint_longa_t b )
 
 size_longa_t int_pow_longa( uint_longa_t *result, uint_longa_t a, long power )
 {
+	int ret = 0;    //to save return value for asserts
 	if( a.n > LONG_MAX / power )  //overflow
 		return -1;
 	size_longa_t result_len = a.n * power;
@@ -414,37 +411,41 @@ size_longa_t int_pow_longa( uint_longa_t *result, uint_longa_t a, long power )
 		result->digits[0] = 1;
 		return 0;
 	}
-	if( construct_longa( &cur_result, result_len ) || construct_longa( &temp_result, result_len ) )
+	if( construct_longa( &cur_result, result_len ) )
 	{
 		return -1;
 	}
+	if( construct_longa( &temp_result, result_len ) )
+	{
+		destruct_longa( &cur_result );
+		return -1;
+	}
 	for( bits_in_power = 0; temp > 0; temp /= 2, bits_in_power++ );    //to calculate how many bits in power
-	copy_longa( &cur_result, a );
+	ret = copy_longa( &cur_result, a );
+	assert( ret == 0 );
 	cur_result.n = a.n;      //for multiplication to work correct: it needs no leading zeros
 	for( int i = bits_in_power - 2; i >=0; i-- )
 	{
 		//dump_longa( cur_result );
 		temp_result.n = cur_result.n + cur_result.n;     //for mul...
-		mul_longa( &temp_result, cur_result, cur_result );
+		ret = mul_longa( &temp_result, cur_result, cur_result );
+		assert( ret == 0 );
 		cur_bit = ( power >> i ) % 2;
 		if( cur_bit )
 		{
 			cur_result.n = temp_result.n + a.n;
-			mul_longa( &cur_result, temp_result, a );
+			ret = mul_longa( &cur_result, temp_result, a );
+			assert( ret == 0 );
 		}
 		else
 		{
 			cur_result.n = temp_result.n;   //for copying and later mul to work correct
-			copy_longa( &cur_result, temp_result );
+			ret = copy_longa( &cur_result, temp_result );
+			assert( ret == 0 );
 		}
 	}
-	//dump_longa( cur_result );
-	if( copy_longa( result, cur_result ) )
-	{
-		printf( "ERROR: in function pow_longa messed up cur_result.n and temp_result.n properties\n" );
-		return -1;
-	}
-	//dump_longa( *result );
+	ret = copy_longa( result, cur_result );
+	assert( ret == 0 );
 	destruct_longa( &cur_result );
 	destruct_longa( &temp_result );
 	return 0;

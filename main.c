@@ -3,17 +3,27 @@
 #include<math.h>
 #include"longalib.h"
 
-
+#define MAX_STR_LEN 1000001
 
 int main()
 {
 	FILE *input, *output;
-	char str[1000001];
+	char str[MAX_STR_LEN];
 	char op;    //operation
 	long unsigned int len = 0;
 	uint_longa_t a, b, res;
 	input = fopen( "input.txt", "r" );
+	if( input == NULL )
+	{
+		printf( "ERROR: cannot open input.txt file\n" );
+		return 0;
+	}
 	output = fopen( "output.txt", "w" );
+	if( output == NULL )
+	{
+		printf( "ERROR: cannot open output.txt file\n" );
+		return 0;
+	}
 	while( fscanf( input, "%s", str ) > 0 )
 	{
 		len = strlen( str );
@@ -23,7 +33,6 @@ int main()
 			return 0;
 		}
 		delete_leading_zeros_longa( &a );
-		//dump_longa( a );
 		if( !fscanf( input, "%s", str ) )   //reading second operand
 		{
 			printf( "ERROR: failed to read second operand\n" );
