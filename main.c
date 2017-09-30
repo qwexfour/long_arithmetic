@@ -5,23 +5,28 @@
 
 #define MAX_STR_LEN 1000001
 
-int main()
+int main( int argc, char **argv )
 {
 	FILE *input, *output;
 	char str[MAX_STR_LEN];
+	char input_str[255];   //contanes the addres of input file
 	char op;    //operation
 	long unsigned int len = 0;
 	uint_longa_t a, b, res;
-	input = fopen( "input.txt", "r" );
+	if( argc < 2 )
+		strcpy( input_str, "input.txt" );   //default
+	else
+		strcpy( input_str, argv[1] );
+	input = fopen( input_str, "r" );
 	if( input == NULL )
 	{
-		printf( "ERROR: cannot open input.txt file\n" );
+		printf( "ERROR: cannot open input file\n" );
 		return 0;
 	}
 	output = fopen( "output.txt", "w" );
 	if( output == NULL )
 	{
-		printf( "ERROR: cannot open output.txt file\n" );
+		printf( "ERROR: cannot open output file\n" );
 		return 0;
 	}
 	while( fscanf( input, "%s", str ) > 0 )
