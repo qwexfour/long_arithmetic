@@ -290,6 +290,10 @@ int div_longa( uint_longa_t *quotient, uint_longa_t a, uint_longa_t b )
 	int ret = 0;  //to save return value for asserts
 	if( a.n == 0 || b.n == 0 || quotient->n == 0 )
 		return -1;
+	if( b.n == 1 )
+	{
+		return int_div_longa( quotient, a, b.digits[0] );
+	}
 	if( is_equal_longa( a, b ) )
 	{
 		quotient->digits[0] = 1;
@@ -299,10 +303,6 @@ int div_longa( uint_longa_t *quotient, uint_longa_t a, uint_longa_t b )
 	{
 		quotient->digits[0] = 0;
 		return 0;
-	}
-	if( b.n == 1 )
-	{
-		return int_div_longa( quotient, a, b.digits[0] );
 	}
 	digit_longa_t d = BASE_LONGA / ( b.digits[b.n - 1] + 1 );
 	digit_longa_t q = 0, r = 0;      //quotien and rest on each step
